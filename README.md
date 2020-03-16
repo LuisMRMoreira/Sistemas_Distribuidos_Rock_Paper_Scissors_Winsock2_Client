@@ -1,5 +1,5 @@
 # Sistemas_Distribuidos_Rock_Paper_Scissors_Winsock2_Client
-Primeiro projeto da unidade curricular Sistemas Distribuídos. Desenvolvimento do jogo Rock Paper Scissors através da biblioteca winsock e de threads. Documento do servidor.
+Primeiro projeto da unidade curricular Sistemas Distribuídos. Desenvolvimento do jogo Rock Paper Scissors através da biblioteca winsock e de threads. Documento do cliente.
 
 Comandos do cliente:
 - PLAY ROCK
