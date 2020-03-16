@@ -24,10 +24,11 @@ int __cdecl main(int argc, char** argv)
     struct addrinfo* result = NULL,
         * ptr = NULL,
         hints;
-    const char* sendbuf = "this is a test";
+    char sendbuf[DEFAULT_BUFLEN];
     char recvbuf[DEFAULT_BUFLEN];
     int iResult;
     int recvbuflen = DEFAULT_BUFLEN;
+    int sendbuflen = DEFAULT_BUFLEN;
 
 
     // Validate the parameters
@@ -86,41 +87,67 @@ int __cdecl main(int argc, char** argv)
         return 1;
     }
 
-    // Send an initial buffer
-    iResult = send(ConnectSocket, sendbuf, (int)strlen(sendbuf), 0);
-    if (iResult == SOCKET_ERROR) {
-        printf("send failed with error: %d\n", WSAGetLastError());
-        closesocket(ConnectSocket);
-        WSACleanup();
-        return 1;
-    }
+    //// Send an initial buffer
+    //iResult = send(ConnectSocket, sendbuf, (int)strlen(sendbuf), 0);
+    //if (iResult == SOCKET_ERROR) {
+    //    printf("send failed with error: %d\n", WSAGetLastError());
+    //    closesocket(ConnectSocket);
+    //    WSACleanup();
+    //    return 1;
+    //}
 
-    printf("Bytes Sent: %ld\n", iResult);
+    //printf("Bytes Sent: %ld\n", iResult);
 
 
     //Antes de fechar o socket temos de fazer vários e indeterminados envios de mensagens para o servidor e receções.
 
 
     // shutdown the connection since no more data will be sent
-    iResult = shutdown(ConnectSocket, SD_SEND);
-    if (iResult == SOCKET_ERROR) {
-        printf("shutdown failed with error: %d\n", WSAGetLastError());
-        closesocket(ConnectSocket);
-        WSACleanup();
-        return 1;
-    }
+    //iResult = shutdown(ConnectSocket, SD_SEND);
+    //if (iResult == SOCKET_ERROR) {
+    //    printf("shutdown failed with error: %d\n", WSAGetLastError());
+    //    closesocket(ConnectSocket);
+    //    WSACleanup();
+    //    return 1;
+    //}
+
+
 
     // Receive until the peer closes the connection
     do {
 
         iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
         if (iResult > 0) {
-            printf("Bytes received: %d\n", iResult);
+            printf("%.*s\n", iResult, recvbuf);
+
+            //get line from terminal
+            ZeroMemory(sendbuf, DEFAULT_BUFLEN);
+            fgets(sendbuf, DEFAULT_BUFLEN, stdin);
+
+            //Remove last character. It was a '\n'
+            sendbuflen = strlen(sendbuf);
+            sendbuf[sendbuflen-1] = '\0';
+
+            if (strcmp(sendbuf, "END") == 0)
+                break;
+
+            // Send a buffer
+            iResult = send(ConnectSocket, sendbuf, (int)strlen(sendbuf), 0);
+            if (iResult == SOCKET_ERROR) {
+                printf("send failed with error: %d\n", WSAGetLastError());
+                closesocket(ConnectSocket);
+                WSACleanup();
+                return 1;
+            }
+
         }
         else if (iResult == 0)
             printf("Connection closed\n");
         else
             printf("recv failed with error: %d\n", WSAGetLastError());
+
+
+
 
     } while (iResult > 0);
 
