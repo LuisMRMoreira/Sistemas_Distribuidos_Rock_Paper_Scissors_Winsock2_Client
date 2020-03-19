@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -29,13 +30,13 @@ int __cdecl main(int argc, char** argv)
     int iResult;
     int recvbuflen = DEFAULT_BUFLEN;
     int sendbuflen = DEFAULT_BUFLEN;
-
+    bool endConnection = 0;
 
     // Validate the parameters
     if (argc != 2) {
         printf("usage: %s server-name\n", argv[0]);
         return 1;
-    }
+    } 
 
     // Initialize Winsock
     iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -128,6 +129,12 @@ int __cdecl main(int argc, char** argv)
             sendbuflen = strlen(sendbuf);
             sendbuf[sendbuflen-1] = '\0';
 
+            // Transforms all characters in the buffer to Upper Case to allow commands to be case insensitive
+            for (int i = 0; i < strlen(sendbuf); i++)
+            {
+                sendbuf[i] = toupper(sendbuf[i]);
+            }
+
             if (strcmp(sendbuf, "END") == 0)
                 break;
 
@@ -145,9 +152,6 @@ int __cdecl main(int argc, char** argv)
             printf("Connection closed\n");
         else
             printf("recv failed with error: %d\n", WSAGetLastError());
-
-
-
 
     } while (iResult > 0);
 
