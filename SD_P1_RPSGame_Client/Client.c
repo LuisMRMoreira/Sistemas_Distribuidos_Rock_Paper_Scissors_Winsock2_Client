@@ -14,7 +14,7 @@
 
 
 #define DEFAULT_BUFLEN 512
-#define DEFAULT_PORT "68000"
+#define DEFAULT_PORT "25565"
 
 
 // O IP do servidor a que o cliente se irá conectar é passada como parametro (Project -> SD_PI_RPSGame_Cliente Properties -> Configuration Properties -> Debugging).
