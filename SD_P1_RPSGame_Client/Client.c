@@ -37,10 +37,10 @@ int __cdecl main(int argc, char** argv)
     bool endConnection = 0;
 
     // argumento 1 -> executável ; argumento 2 -> IP. Caso isto não se verifique é porque o número de parametros é inválido.
-    if (argc != 2) { 
+    /*if (argc != 2) { 
         printf("usage: %s server-name\n", argv[0]);
         return 1;
-    } 
+    } */
 
     // Initialize a utilização da biblioteca Winsock por um proceso.
     iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -66,7 +66,7 @@ int __cdecl main(int argc, char** argv)
     // Tenta conectar a um endereço até que um seja bem sucedido
     for (ptr = result; ptr != NULL; ptr = ptr->ai_next) {
 
-        // Criação de um servidor para conectar o cliente ao servidor.
+        // Criação de um socket para conectar o cliente ao servidor.
         ConnectSocket = socket(ptr->ai_family, ptr->ai_socktype,
             ptr->ai_protocol);
         if (ConnectSocket == INVALID_SOCKET) {
@@ -93,6 +93,12 @@ int __cdecl main(int argc, char** argv)
         printf("Unable to connect to server!\n");
         WSACleanup();
         return 1;
+    }
+
+    // Recebe o "100 OK: Connection Established"
+    iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
+    if (iResult > 0) {
+        printf("%.*s\n", iResult, recvbuf);
     }
 
     // Recebe informação enquanto a conexão não fechar.
@@ -130,7 +136,6 @@ int __cdecl main(int argc, char** argv)
                 WSACleanup();
                 return 1;
             }
-
         }
         else if (iResult == 0)// No caso do valor iResult ser 0 é porque não se leu nenhuma informação do servidor, ou seja, a conexão não está estabelecida.
             printf("Connection closed\n");
@@ -145,6 +150,3 @@ int __cdecl main(int argc, char** argv)
 
     return 0;
 }
-
-
-
