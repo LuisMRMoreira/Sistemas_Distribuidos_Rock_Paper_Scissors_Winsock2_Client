@@ -120,12 +120,14 @@ int __cdecl main(int argc, char** argv)
             sendbuflen = strlen(sendbuf);
             sendbuf[sendbuflen-1] = '\0';
 
-            // Transforma todos os caracteres do buffer que contem a mensagem lida para "Upper Case" de forma a que os comandos sejam case insensitive.
-            for (int i = 0; i < strlen(sendbuf); i++)
-                sendbuf[i] = toupper(sendbuf[i]);
-
             // No caso do utilizador ter escrito o comando END, sai-se do ciclo while e trata-se de fechar o socket de comunicação.
-            if (strcmp(sendbuf, "END") == 0)
+            
+
+            char tempSendBuf[DEFAULT_BUFLEN];
+            for (int i = 0; i < 5; i++)
+                tempSendBuf[i] = toupper(sendbuf[i]);
+            
+            if (strcmp(tempSendBuf, "END") == 0)
                 break;
 
             // Enviar para o servidor o buffer lido do terminal "sendbuf"
